@@ -1,0 +1,32 @@
+name: publish-videos
+on:
+  push:
+    paths:
+      - .github/workflows/publish-videos.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download videos
+        run: |
+          set -euo pipefail
+          mkdir -p videos
+          curl -fsSL -o videos/2026-10-27-01-chatgpt-free-limits.mp4 https://pomf2.lain.la/f/ur16tfkv.mp4
+          curl -fsSL -o videos/2026-10-27-02-gemini-notebook.mp4 https://pomf2.lain.la/f/bq1lzhmy.mp4
+          curl -fsSL -o videos/2026-10-27-03-zero-dollar-test.mp4 https://pomf2.lain.la/f/akz3d5nh.mp4
+          curl -fsSL -o videos/2026-10-27-04-income-video-test.mp4 https://pomf2.lain.la/f/qyfsse7f.mp4
+          curl -fsSL -o videos/2026-10-27-05-label-ai.mp4 https://pomf2.lain.la/f/2l6y0hwt.mp4
+          for f in videos/*.mp4; do
+            size=$(wc -c < "$f")
+            echo "$f $size"
+            test "$size" -gt 100000
+          done
+          git config user.name "patvmart5-cloud"
+          git config user.email "pat.vmart5@gmail.com"
+          git add videos
+          git commit -m "Add scheduled TikTok video files"
+          git push
